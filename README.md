@@ -1,6 +1,6 @@
 # Remind Me
  
-## Description
+Description
 Remind Me is a simple Laravel-based personal task and reminder
 management system. It allows a user to add a specific task or job
 for a given day, complete with a due date and time, so that nothing
@@ -9,9 +9,8 @@ edit its details, or delete it once it is no longer needed. The
 system is meant to help a user stay organized and keep track of
 daily responsibilities in one place.
  
-## Student Information
-- Names: Christian Valenzuela Bohol, Loren Gersalia Monzales
-- Course, Year & Section: BSIT 4-3
+Christian Valenzuela Bohol, Loren Gersalia Monzales
+ BSIT 4-3
  
 ## Software Requirements
 - PHP >= 8.1
