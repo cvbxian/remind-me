@@ -10,7 +10,7 @@ system is meant to help a user stay organized and keep track of
 daily responsibilities in one place.
  
 Christian Valenzuela Bohol, Loren Gersalia Monzales
- BSIT 4-3
+BSIT 4-3
  
 ## Software Requirements
 - PHP >= 8.1
