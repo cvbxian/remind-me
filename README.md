@@ -1,59 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Remind Me
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Description
+Remind Me is a simple Laravel-based personal task and reminder management
+system. It allows a user to add a specific task or job for a given day,
+complete with a due date and time, so that nothing gets forgotten. From the
+task list, a user can mark a task as done, edit its details, or delete it
+once it is no longer needed. The system is meant to help a user stay
+organized and keep track of daily responsibilities in one place.
 
-## About Laravel
+## Student Information
+- Names: Christian Valenzuela Bohol, Loren Gersalia Monzales
+- Course, Year & Section: BSIT 4-3
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Software Requirements
+- PHP >= 8.1
+- Composer
+- MySQL / MariaDB
+- Git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation
+1. Clone the repository:
+   git clone https://github.com/cvbxian/remind-me.git
+2. Install dependencies:
+   composer install
+3. Copy the environment file:
+   cp .env.example .env
+4. Generate the application key:
+   php artisan key:generate
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Database
+- Database name: remind_me_db
+- Create the database in MySQL, then set DB_* values in your .env
+- Run migrations to build the schema:
+   php artisan migrate
 
-## Learning Laravel
+## Running the Project
+   php artisan serve
+Then open http://127.0.0.1:8000 in your browser.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Repository Link
+https://github.com/cvbxian/remind-me
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Request Data Model (Laboratory 2)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### requests Table Fields
+- id (PK, auto-increment)
+- requester_name (string, 100)
+- requester_email (string, 255)
+- item_name (string, 150)
+- quantity (unsigned integer, must be > 0)
+- purpose (text)
+- status (string, 20, default: pending)
+- created_at / updated_at (timestamps)
 
-### Premium Partners
+### Migration Command
+   php artisan make:migration create_requests_table
+   php artisan migrate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Verifying the Table
+1. php artisan migrate:status  (confirm it is marked Ran)
+2. Open phpMyAdmin > remind_me_db > requests > Structure tab
+3. Run: SELECT id, requester_name, item_name, quantity, status FROM requests;
+4. Confirm a row with an omitted status shows the default 'pending'
 
-## Contributing
+### User Stories
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**As a requester**, I want to submit a request with an item name, quantity,
+and purpose so that I can obtain what I need through a recorded, trackable
+process.
+- Given valid request details with a quantity greater than zero, when the
+  request is saved, then a new row is created in the requests table.
+- Given no status is specified, when the row is saved, then it defaults to
+  'pending'.
 
-## Code of Conduct
+**As a staff reviewer**, I want to view all submitted requests along with
+their current status so that I can identify which ones still need action.
+- Given at least one request exists, when I query id, requester_name,
+  item_name, quantity, and status, then all matching rows are returned.
+- Given a request has not been reviewed, when I view it, then its status
+  still reads 'pending'.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**As a record keeper**, I want every request to automatically store when it
+was created and last updated so that I can maintain an accurate audit trail.
+- Given a new request is inserted, when I inspect the row, then created_at
+  and updated_at are both automatically populated.
+- Given an existing request is later modified, when I inspect it again, then
+  updated_at reflects a newer timestamp than created_at.
