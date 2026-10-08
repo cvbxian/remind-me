@@ -88,4 +88,9 @@ was created and last updated so that I can maintain an accurate audit trail.
   and updated_at are both automatically populated.
 - Given an existing request is later modified, when I inspect it again, then
   updated_at reflects a newer timestamp than created_at.
+<<<<<<< HEAD
 Verification instruction: Test student ownership and deny access to another student's request.
+=======
+## Laboratory 3 Verification
+Verification instruction: Test administrator access and administrator-only status updates.
+>>>>>>> origin/main
