@@ -89,3 +89,4 @@ was created and last updated so that I can maintain an accurate audit trail.
 - Given an existing request is later modified, when I inspect it again, then
   updated_at reflects a newer timestamp than created_at.
 ## Laboratory 3 Verification
+Verification instruction: Test administrator access and administrator-only status updates.
