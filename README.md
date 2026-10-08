@@ -83,8 +83,69 @@ their current status so that I can identify which ones still need action.
   still reads 'pending'.
 
 **As a record keeper**, I want every request to automatically store when it
-was created and last updated so that I can maintain an accurate audit trail.
+was created and last updated so that I can maintain an accurate audit trail
 - Given a new request is inserted, when I inspect the row, then created_at
   and updated_at are both automatically populated.
 - Given an existing request is later modified, when I inspect it again, then
   updated_at reflects a newer timestamp than created_at.
+
+## Secure Request Access (Laboratory 3)
+ 
+### Ownership and access rules
+| Action | Student (owner) | Student (not owner) | Administrator | Guest |
+|---|---|---|---|---|
+| List requests | Own records only | Own records only | All records | Redirect to login |
+| View a request | Allowed | 403 Forbidden | Allowed | Redirect to login |
+| Create a request | Allowed | Allowed (own) | Not allowed | Redirect to login |
+| Update status | 403 Forbidden | 403 Forbidden | Allowed | Redirect to login |
+ 
+Ownership is decided by `requests.user_id`, never by requester_name or requester_email.
+ 
+### Denial response
+A student opening another student's record receives **403 Forbidden**.
+This is applied consistently to view and status-update denials.
+ 
+### Route summary
+| Method | URI | Controller method | Access |
+|---|---|---|---|
+| GET | /login | AuthController@showLogin | Guests |
+| POST | /login | AuthController@login | Guests |
+| POST | /logout | AuthController@logout | Signed-in |
+| GET | /requests | ServiceRequestController@index | Signed-in (scoped) |
+| GET | /requests/create | ServiceRequestController@create | Students |
+| POST | /requests | ServiceRequestController@store | Students |
+| GET | /requests/{id} | ServiceRequestController@show | Owner or admin |
+| PATCH | /requests/{id}/status | ServiceRequestController@updateStatus | Admin only |
+ 
+### File responsibilities
+- Policy (app/Policies/ServiceRequestPolicy.php): Christian Valenzuela Bohol
+- Controller (app/Http/Controllers/ServiceRequestController.php): Christian Valenzuela Bohol
+- Routes (routes/web.php): Christian Valenzuela Bohol
+- Views (resources/views/): Loren Gersalia Monzales
+- Tests (manual access/input test matrix T01-T10): Loren Gersalia Monzales
+ 
+### Setup, migration and seeding
+1. composer install
+2. cp .env.example .env
+3. php artisan key:generate
+4. Set DB_* values and the two LAB_*_PASSWORD values in your local .env
+   (use fictional passwords; never commit .env)
+5. Create the database remind_me_db in MySQL
+6. php artisan migrate
+7. php artisan db:seed --class=LabAccountsSeeder
+8. php artisan serve
+ 
+Fictional accounts: student.a@example.com, student.b@example.com,
+admin@example.com (passwords come from your local .env).
+ 
+### Testing steps
+Run the manual matrix T01-T10 with three separate browser sessions
+(Student A, Student B, Administrator). Compare database values before and
+after each write attempt. Test CSRF rejection (419) through live browser
+requests, not automated feature tests.
+ 
+### Security notes
+- Passwords are stored with Laravel hashing (bcrypt).
+- .env is excluded by .gitignore; .env.example holds no real credentials.
+- APP_DEBUG must be false in deployed or shared environments.
+- Run `composer audit` and review findings before upgrading dependencies.
