@@ -1,0 +1,41 @@
+.git
+.gitignore
+.gitattributes
+.github
+.idea
+.vscode
+
+# Secrets and local environment files
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Rebuilt inside the image
+vendor
+node_modules
+public/build
+public/hot
+public/storage
+
+# Backups, archives, logs
+*.sql
+*.sql.gz
+*.bak
+*.zip
+*.tar
+*.tar.gz
+*.log
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+
+# Not needed at runtime
+tests
+Dockerfile
+compose.yaml
+README.md
