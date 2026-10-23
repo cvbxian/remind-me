@@ -161,9 +161,43 @@ Open http://127.0.0.1:8080. Do not use `migrate:fresh` or `docker compose down -
 6. `docker compose -p remind-review exec app php artisan db:seed --class=LabAccountsSeeder --force`
 7. Open http://127.0.0.1:8081 (the project uses its own database volume)
 
-### Why credentials are not stored in Docker images
+### Why credentials are not stored in Docker image
 Anyone who receives an image can read every layer, so a password or key baked
 into it is exposed to everyone who pulls or inspects it, and it stays in the
 layer history even if a later step deletes it. Credentials are therefore
 supplied at runtime through `.env.container`, which is excluded from Git and
 from the build context.
+
+$ docker compose ps
+NAME              IMAGE                                                                     COMMAND      SERVICE   CREATED          STATUS                    PORTS
+remind-me-app-1   remind-me-app                                                             "docker-php-entrypoi…"   app       29 seconds ago   Up 27 seconds (healthy)   9000/tcp
+remind-me-db-1    mysql:8.0                                                                 "docker-entrypoint.s…"   db        23 minutes ago   Up 23 minutes (healthy)   3306/tcp, 33060/tcp
+remind-me-web-1   sha256:1d11a417964adb1aec32b90d471fee942aa64baa42ba77b980914f285773f0de   "/docker-entrypoint.…"   web       59 minutes ago   Up 18 seconds (healthy)   127.0.0.1:8080->8080/tcp
+
+corin@corine MINGW64 ~/remind-me (feature/lab4-containers)
+$ docker compose down
+[+] down 4/4
+ ✔ Container remind-me-web-1 Removed                                                                       0.4s
+ ✔ Container remind-me-app-1 Removed                                                                       0.2s
+ ✔ Container remind-me-db-1  Removed                                                                       1.7s
+ ✔ Network remind-me_appnet  Removed                                                                       0.2s
+
+corin@corine MINGW64 ~/remind-me (feature/lab4-containers)
+$ docker compose up -d
+[+] up 4/4
+ ✔ Network remind-me_appnet  Created                                                                       0.0s
+ ✔ Container remind-me-db-1  Healthy                                                                       6.1s
+ ✔ Container remind-me-app-1 Healthy                                                                      11.6s
+ ✔ Container remind-me-web-1 Started                                                                      11.7s
+
+corin@corine MINGW64 ~/remind-me (feature/lab4-containers)
+$ docker compose ps
+NAME              IMAGE           COMMAND                  SERVICE   CREATED              STATUS         PORTS
+remind-me-app-1   remind-me-app   "docker-php-entrypoi…"   app       About a minute ago   Up About a minute (healthy)   9000/tcp
+remind-me-db-1    mysql:8.0       "docker-entrypoint.s…"   db        About a minute ago   Up About a minute (healthy)   3306/tcp, 33060/tcp
+remind-me-web-1   remind-me-web   "/docker-entrypoint.…"   web       About a minute ago   Up 56 seconds (healthy)       127.0.0.1:8080->8080/tcp
+
+corin@corine MINGW64 ~/remind-me (feature/lab4-containers)
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     remind-me_db_data
