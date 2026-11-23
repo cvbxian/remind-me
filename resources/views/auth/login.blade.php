@@ -1,19 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Login - Remind Me</title>
-</head>
-<body>
-    <h1>Remind Me - Login</h1>
-    @if ($errors->any())
-        <p style="color:red">{{ $errors->first() }}</p>
-    @endif
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-        <p><label>Email<br><input type="email" name="email" value="{{ old('email') }}"></label></p>
-        <p><label>Password<br><input type="password" name="password"></label></p>
-        <button type="submit">Log in</button>
-    </form>
-</body>
-</html>
+@extends('layouts.app')
+@section('title', 'Login - Remind Me')
+
+@section('content')
+<div class="login-wrap">
+    <div class="panel">
+        <div class="panel-head">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="ttl">remind-me — secure login</span>
+        </div>
+        <div class="panel-body">
+            <h2 style="margin:0 0 4px; color:var(--green)">&gt; REMIND-ME</h2>
+            <p class="hint">Authenticate to access your activity schedule.</p>
+
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <label>email
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="user@example.com" required autofocus>
+                </label>
+                <label>password
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </label>
+                <button type="submit" class="btn btn-block">./login</button>
+            </form>
+
+            <p class="hint" style="margin:16px 0 0; text-align:center">
+                No account yet? <a href="{{ route('register') }}">Sign up</a>
+            </p>
+        </div>
+    </div>
+</div>
+@endsection

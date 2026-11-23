@@ -1,31 +1,38 @@
 @extends('layouts.app')
 @section('title', 'Requests')
-@section('content')
-<h1>{{ auth()->user()->isAdmin() ? 'All Requests' : 'My Requests' }}</h1>
 
-<form method="GET" action="{{ route('requests.index') }}">
-    <input type="text" name="q" value="{{ request('q') }}" placeholder="Search item">
-    <button type="submit">Search</button>
+@section('content')
+<div class="row" style="align-items:center; margin-bottom:14px">
+    <h2 style="margin:0; color:#fff">{{ auth()->user()->isAdmin() ? 'All Requests' : 'My Requests' }}</h2>
+    @can('create', \App\Models\ServiceRequest::class)
+        <a class="btn btn-green" href="{{ route('requests.create') }}">+ new request</a>
+    @endcan
+</div>
+
+<form method="GET" action="{{ route('requests.index') }}" style="display:flex; gap:8px; margin-bottom:16px">
+    <input type="text" name="q" value="{{ request('q') }}" placeholder="search item..." style="margin-top:0">
+    <button type="submit" class="btn">search</button>
 </form>
-<br>
-<table>
-    <tr>
-        <th>ID</th>
-        @if (auth()->user()->isAdmin()) <th>Owner ID</th> @endif
-        <th>Item</th><th>Qty</th><th>Status</th><th></th>
-    </tr>
-    @forelse ($requests as $r)
-        <tr>
-            <td>{{ $r->id }}</td>
-            @if (auth()->user()->isAdmin()) <td>{{ $r->user_id }}</td> @endif
-            <td>{{ $r->item_name }}</td>
-            <td>{{ $r->quantity }}</td>
-            <td>{{ $r->status }}</td>
-            <td><a href="{{ route('requests.show', $r) }}">View</a></td>
-        </tr>
-    @empty
-        <tr><td colspan="6">No requests found.</td></tr>
-    @endforelse
-</table>
+
+@forelse ($requests as $r)
+    <div class="item">
+        <div class="row" style="align-items:center">
+            <div>
+                <span class="title">#{{ $r->id }} {{ $r->item_name }}</span>
+                <span class="tag {{ $r->status === 'approved' ? 'done' : 'pending' }}">
+                    {{ strtoupper($r->status) }}
+                </span>
+                <div class="meta">
+                    qty {{ $r->quantity }}
+                    @if (auth()->user()->isAdmin()) · owner ID {{ $r->user_id }} @endif
+                </div>
+            </div>
+            <a class="btn btn-ghost" href="{{ route('requests.show', $r) }}">view</a>
+        </div>
+    </div>
+@empty
+    <div class="empty">// no requests found</div>
+@endforelse
+
 {{ $requests->links('pagination::simple-default') }}
 @endsection
