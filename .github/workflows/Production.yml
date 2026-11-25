@@ -1,50 +1,11 @@
-
-name: Production Deployment
+name: Production Deployment (manual only)
 
 on:
-  push:
-    tags:
-      - 'v*'
-
   workflow_dispatch:
 
 jobs:
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, bcmath, pdo, pdo_mysql
-          coverage: none
-
-      - name: Install Dependencies
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Run Tests
-        run: |
-          composer install --no-interaction --prefer-dist
-          php artisan test
-        env:
-          APP_ENV: testing
-          APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
-
-      - name: Build Frontend
-        run: |
-          if [ -f package.json ]; then
-            npm ci
-            npm run build
-          fi
-
-      - name: Deploy to Production
-        run: |
-          echo "Production deployment triggered."
-          echo "Connect your hosting provider deployment command here."
+      - run: echo "Production is not used in Laboratory 8. Manual run only."
